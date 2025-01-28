@@ -1,0 +1,6 @@
+# Ignore entire folder /.terraform
+.terraform/
+
+# Ignore all files in /keypair
+keypair/*
+!keypair
