@@ -45,5 +45,5 @@ variable "ec2_private_key_file_path" {
 
 variable "ami_id" {
   type    = string
-  default = "ami-00ba9561b67b5723f"
+  default = "ami-0672fd5b9210aa093"
 }
