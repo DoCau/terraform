@@ -184,6 +184,71 @@ resource "aws_instance" "jenkins-master-ec2" {
     Name         = "jenkins-master-ec2"
     created_time = module.created_timestamp.created_timestamp
   }
+
+  user_data = <<-EOF
+  #!/bin/bash
+  set -eux
+  #export userdir=$(pwd)
+  export userdir="/home/ubuntu"
+
+  #Update system without recommend installations
+  echo ">>>STEP 1<<<"
+  sudo apt update  
+  sudo apt upgrade -y --no-install-recommends
+
+  #Install addtional packages
+  echo ">>>STEP 2<<<"
+  sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common tree
+
+  #Download & add Docker GPG key
+  echo ">>>STEP 3<<<"
+  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+  #Add Docker to apt list
+  echo ">>>STEP 4<<<"
+  sudo add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable"
+
+  #Update system after adding Docker to apt
+  echo ">>>STEP 5<<<"
+  sudo apt-get update
+
+  #Install Docker and plugins
+  echo ">>>STEP 6<<<"
+  sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+  #Add more configs to Docker
+  echo ">>>STEP 7<<<"
+  sudo usermod -aG docker ubuntu
+  sudo systemctl enable docker
+
+  #Add file docker-compose, change include content & rename file to .yml
+  echo ">>>STEP 8<<<"
+  cat <<EOT > /home/ubuntu/docker-compose
+  services:
+    jenkins:
+      image: docker.io/bitnami/jenkins:2
+      ports:
+        - '8080:8080'
+      environment:
+        - JENKINS_PASSWORD=${var.jenkins_password}
+      volumes:
+        - './jenkins_data:/bitnami/jenkins'
+  EOT
+  mv "$userdir/docker-compose" "$userdir/docker-compose.yml"
+  
+  #Add directory to store Jenkins data
+  echo ">>>STEP 8<<<"
+  mkdir -p "$userdir/jenkins_data"
+  sudo chmod 777 -R "$userdir/jenkins_data"
+
+  #Start docker
+  echo ">>>STEP 10<<<"
+  cd "$userdir"
+  docker compose up -d
+  EOF
 }
 
 resource "aws_instance" "jenkins-worker-ec2" {

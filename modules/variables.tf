@@ -47,3 +47,9 @@ variable "ami_id" {
   type    = string
   default = "ami-0672fd5b9210aa093"
 }
+
+variable "jenkins_password" {
+  type      = string
+  sensitive = true
+  nullable  = false
+}
