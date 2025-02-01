@@ -4,3 +4,6 @@
 # Ignore all files in /keypair
 keypair/*
 !keypair
+
+#Ignore file .tfvars
+.tfvars
