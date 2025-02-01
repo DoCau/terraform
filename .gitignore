@@ -6,4 +6,4 @@ keypair/*
 !keypair
 
 #Ignore file .tfvars
-.tfvars
+*.tfvars
