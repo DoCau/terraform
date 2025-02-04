@@ -277,7 +277,7 @@ resource "aws_instance" "jenkins-worker-ec2" {
 
   #Install addtional packages
   echo ">>>STEP 2<<<"
-  sudo apt-get install -y python3 python3-pip unzip apt-transport-https ca-certificates curl software-properties-common tree
+  sudo apt-get install -y python3 python3-pip unzip apt-transport-https ca-certificates curl software-properties-common openjdk-21-jre-headless tree
 
   #Install GIT SCM
   echo ">>>STEP 2.1<<<"
@@ -321,6 +321,10 @@ resource "aws_instance" "jenkins-worker-ec2" {
   region = ${var.aws_access_key_region}
   output = json
   EOT
+  cd "$userdir"
+  mkdir -p "$userdir/var"
+  mkdir -p "$userdir/var/jenkins"
+  sudo chmod 777 -R "$userdir/var/jenkins"
 
   echo "Done!"
   EOF
