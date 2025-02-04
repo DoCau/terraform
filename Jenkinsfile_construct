@@ -1,0 +1,46 @@
+pipeline{
+
+    agent { label 'c23100002' }
+
+    environment{
+        GITHUB_TERRAFORM_PIPELINE_CREDENTIAL = credentials('GITHUB_TERRAFORM_PIPELINE_CREDENTIAL')
+    }
+
+    stages{
+        stage('Checkout Repo') {
+            steps {
+                git branch: '${branchName}',
+                url: 'https://${GITHUB_TERRAFORM_PIPELINE_CREDENTIAL}@github.com/DoCau/devops2402-dothecau.git'
+            }
+        }
+
+        stage('Initiate') {
+            steps {
+                sh "terraform init"
+            }
+        }
+
+        stage('Validate') {
+            steps {
+                sh "terraform validate"
+            }
+        }
+
+        stage('Apply') {
+            steps {
+                sh "terraform apply -auto-approve"
+                echo "Cloud infra has been setup"             
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Terraform apply completed successfully!'
+        }
+        failure {
+            echo 'Terraform apply failed!'
+        }
+    }
+
+}
