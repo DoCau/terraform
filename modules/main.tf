@@ -188,8 +188,8 @@ resource "aws_instance" "jenkins-master-ec2" {
   user_data = <<-EOF
   #!/bin/bash
   set -eux
-  export userdir=$(pwd)
-  #export userdir="/home/ubuntu"
+  #export userdir=$(pwd)
+  export userdir="/home/ubuntu"
 
   #Update system without recommend installations
   echo ">>>STEP 1<<<"
@@ -267,8 +267,8 @@ resource "aws_instance" "jenkins-worker-ec2" {
   user_data = <<-EOF
   #!/bin/bash
   set -eux
-  export userdir=$(pwd)
-  #export userdir="/home/ubuntu"
+  #export userdir=$(pwd)
+  export userdir="/home/ubuntu"
 
   #Update system without recommend installations
   echo ">>>STEP 1<<<"
@@ -278,6 +278,10 @@ resource "aws_instance" "jenkins-worker-ec2" {
   #Install addtional packages
   echo ">>>STEP 2<<<"
   sudo apt-get install -y python3 python3-pip unzip apt-transport-https ca-certificates curl software-properties-common tree
+
+  #Install GIT SCM
+  echo ">>>STEP 2.1<<<"
+  sudo apt-get install -y git
 
   #Download & install aws-cli
   echo ">>>STEP 3<<<"
@@ -290,7 +294,7 @@ resource "aws_instance" "jenkins-worker-ec2" {
   #Install aws-cli
   echo ">>>STEP 5<<<"
   sudo chmod 777 -R "$userdir/aws"
-  sudo ./aws/install
+  sudo "$userdir/aws/install"
 
   #Add gpg key for terraform, add terraform to apt, use apt to install terraform
   echo ">>>STEP 6<<<"
@@ -299,8 +303,26 @@ resource "aws_instance" "jenkins-worker-ec2" {
   sudo apt update && sudo apt install -y terraform
 
   #Update system after adding aws-cli & terraform
-  echo ">>>STEP 5<<<"
+  echo ">>>STEP 7<<<"
   sudo apt-get update
+
+  #Add credentials to aws cli
+  echo ">>>STEP 8<<<"
+  cd "$userdir"
+  mkdir -p "$userdir/.aws"
+  cd "$userdir/.aws"
+  cat <<EOT > credentials
+  [default]
+  aws_access_key_id = ${var.aws_access_key_id}
+  aws_secret_access_key = ${var.aws_secret_access_key}
+  EOT
+  cat <<EOT > config
+  [default]
+  region = ${var.aws_access_key_region}
+  output = json
+  EOT
+
+  echo "Done!"
   EOF
 }
 #---------------------------EC2--------------------------------

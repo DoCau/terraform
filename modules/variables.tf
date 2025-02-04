@@ -59,3 +59,22 @@ variable "jenkins_username" {
   sensitive = true
   nullable  = false
 }
+
+variable "aws_access_key_id" {
+  type      = string
+  sensitive = true
+  nullable  = false
+}
+
+variable "aws_secret_access_key" {
+  type      = string
+  sensitive = true
+  nullable  = false
+}
+
+variable "aws_access_key_region" {
+  type      = string
+  default   = "ap-southeast-1"
+  sensitive = true
+  nullable  = false
+}
