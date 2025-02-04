@@ -188,8 +188,8 @@ resource "aws_instance" "jenkins-master-ec2" {
   user_data = <<-EOF
   #!/bin/bash
   set -eux
-  #export userdir=$(pwd)
-  export userdir="/home/ubuntu"
+  export userdir=$(pwd)
+  #export userdir="/home/ubuntu"
 
   #Update system without recommend installations
   echo ">>>STEP 1<<<"
@@ -233,7 +233,9 @@ resource "aws_instance" "jenkins-master-ec2" {
       ports:
         - '8080:8080'
       environment:
+        - JENKINS_USERNAME=${var.jenkins_username}
         - JENKINS_PASSWORD=${var.jenkins_password}
+        - JENKINS_PLUGINS=github,github-pullrequest,pipeline-github,pipeline-model-definition,pipeline-stage-view
       volumes:
         - './jenkins_data:/bitnami/jenkins'
   EOT
@@ -261,12 +263,51 @@ resource "aws_instance" "jenkins-worker-ec2" {
     Name         = "jenkins-worker-ec2"
     created_time = module.created_timestamp.created_timestamp
   }
+
+  user_data = <<-EOF
+  #!/bin/bash
+  set -eux
+  export userdir=$(pwd)
+  #export userdir="/home/ubuntu"
+
+  #Update system without recommend installations
+  echo ">>>STEP 1<<<"
+  sudo apt update
+  sudo apt upgrade -y --no-install-recommends
+
+  #Install addtional packages
+  echo ">>>STEP 2<<<"
+  sudo apt-get install -y python3 python3-pip unzip apt-transport-https ca-certificates curl software-properties-common tree
+
+  #Download & install aws-cli
+  echo ">>>STEP 3<<<"
+  curl -fsSL https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip -o "awscliv2.zip"
+
+  #Unzip downloaded file
+  echo ">>>STEP 4<<<"
+  unzip awscliv2.zip -d "$userdir"
+
+  #Install aws-cli
+  echo ">>>STEP 5<<<"
+  sudo chmod 777 -R "$userdir/aws"
+  sudo ./aws/install
+
+  #Add gpg key for terraform, add terraform to apt, use apt to install terraform
+  echo ">>>STEP 6<<<"
+  wget -O - https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+  echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+  sudo apt update && sudo apt install -y terraform
+
+  #Update system after adding aws-cli & terraform
+  echo ">>>STEP 5<<<"
+  sudo apt-get update
+  EOF
 }
 #---------------------------EC2--------------------------------
 
 
 
-#---------------------------EC2--------------------------------
+#---------------------------KEYPAIR--------------------------------
 resource "tls_private_key" "ec2-key-pair-generator" {
   algorithm = "RSA"
   rsa_bits  = 2048
@@ -289,7 +330,7 @@ resource "local_file" "ec2-private-key" {
   filename = var.ec2_private_key_file_path
   content  = tls_private_key.ec2-key-pair-generator.private_key_openssh
 }
-#---------------------------EC2--------------------------------
+#---------------------------KEYPAIR--------------------------------
 
 
 

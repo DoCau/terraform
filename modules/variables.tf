@@ -53,3 +53,9 @@ variable "jenkins_password" {
   sensitive = true
   nullable  = false
 }
+
+variable "jenkins_username" {
+  type      = string
+  sensitive = true
+  nullable  = false
+}
