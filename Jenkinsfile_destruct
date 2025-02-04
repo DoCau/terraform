@@ -1,0 +1,32 @@
+pipeline {
+    
+    agent { label 'c23100002' }
+
+
+    stages {
+        stage('Terraform Plan - Destroy') {
+            steps {
+                script {
+                    sh 'terraform plan -destroy -out=tfplan-destroy'
+                }
+            }
+        }
+
+        stage('Terraform Destroy') {
+            steps {
+                script {
+                    sh 'terraform destroy -auto-approve'
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Terraform destroy completed successfully!'
+        }
+        failure {
+            echo 'Terraform destroy failed!'
+        }
+    }
+}
