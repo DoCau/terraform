@@ -78,3 +78,34 @@ variable "aws_access_key_region" {
   sensitive = true
   nullable  = false
 }
+
+variable "github_username" {
+  type      = string
+  nullable  = false
+  sensitive = true
+}
+
+variable "github_password" {
+  type      = string
+  nullable  = false
+  sensitive = true
+}
+
+variable "ssh_username" {
+  type      = string
+  nullable  = false
+  sensitive = true
+}
+
+variable "ssh_passphrase" {
+  type      = string
+  nullable  = true
+  sensitive = true
+  default   = ""
+}
+
+variable "ssh_private_key" {
+  type      = string
+  nullable  = false
+  sensitive = true
+}
