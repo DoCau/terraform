@@ -235,9 +235,12 @@ resource "aws_instance" "jenkins-master-ec2" {
       environment:
         - JENKINS_USERNAME=${var.jenkins_username}
         - JENKINS_PASSWORD=${var.jenkins_password}
-        - JENKINS_PLUGINS=github,github-pullrequest,pipeline-github,pipeline-model-definition,pipeline-stage-view
+        - JENKINS_PLUGINS=github,github-pullrequest,pipeline-github,pipeline-model-definition,pipeline-stage-view,ssh-slaves,configuration-as-code
+        - CASC_JENKINS_CONFIG=/bitnami/jenkins/casc_configs/jenkins.yaml
+        - JENKINS_OPTS=--httpPort=8080 --httpsPort=-1
       volumes:
         - './jenkins_data:/bitnami/jenkins'
+        - './jenkins.yml:/bitnami/jenkins/casc_configs/jenkins.yaml'
   EOT
   mv "$userdir/docker-compose" "$userdir/docker-compose.yml"
   
@@ -245,6 +248,36 @@ resource "aws_instance" "jenkins-master-ec2" {
   echo ">>>STEP 8<<<"
   mkdir -p "$userdir/jenkins_data"
   sudo chmod 777 -R "$userdir/jenkins_data"
+
+  #Add file jenkins.yml to store data of plugin JENKINS-configuration-as-code
+  echo ">>>STEP 8.1<<<"
+  cat <<EOT > "$userdir/jenkins"
+  jenkins:
+    securityRealm: legacy
+    authorizationStrategy: loggedInUsersCanDoAnyThing
+
+  credentials:
+    system:
+      domainCredentials:
+        - credentials:
+            - usernamePassword:
+                scope: GLOBAL
+                id: "github_credential_for_jenkins_files"
+                username: "${var.github_username}"
+                password: "${var.github_password}"
+                description: "jenkins pipelines take github credentials here"
+            - basicSSHUserPrivateKey:
+                scope: GLOBAL
+                id: ssh_credentials_for_worker_node
+                username: ${var.ssh_username}
+                passphrase: ${var.ssh_passphrase}
+                description: "SSH private passphrase & key for SSH connection to worker"
+                privateKeySource:
+                  directEntry:
+                    privateKey: "${var.ssh_private_key}"
+  EOT
+  mv "$userdir/jenkins" "$userdir/jenkins.yml"
+  sudo chmod 777 "$userdir/jenkins.yml"
 
   #Start docker
   echo ">>>STEP 10<<<"
