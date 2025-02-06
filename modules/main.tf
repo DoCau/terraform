@@ -235,7 +235,7 @@ resource "aws_instance" "jenkins-master-ec2" {
       environment:
         - JENKINS_USERNAME=${var.jenkins_username}
         - JENKINS_PASSWORD=${var.jenkins_password}
-        - JENKINS_PLUGINS=github,github-pullrequest,pipeline-github,pipeline-model-definition,pipeline-stage-view,ssh-slaves,configuration-as-code
+        - JENKINS_PLUGINS=github,github-pullrequest,pipeline-github,pipeline-model-definition,pipeline-stage-view,ssh-slaves,configuration-as-code,credentials,workflow-support
         - CASC_JENKINS_CONFIG=/bitnami/jenkins/casc_configs/jenkins.yaml
         - JENKINS_OPTS=--httpPort=8080 --httpsPort=-1
       volumes:
