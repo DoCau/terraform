@@ -12,16 +12,6 @@ pipeline {
     }
 
     stages {
-        stage('Traverse to project dir') {
-            steps {
-                sh '''
-                    pwd
-                    cd ../
-                    pwd
-                    ls
-                '''
-            }
-        }
 
         stage('Terraform Plan - Destroy') {
             steps {
@@ -30,19 +20,12 @@ pipeline {
                         cd "${DESIRED_DIR}"
                         pwd
                         ls
+                        terraform destroy -auto-approve
                     '''
-                    //sh 'terraform plan -destroy -out=tfplan-destroy'
                 }
             }
         }
 
-        // stage('Terraform Destroy') {
-        //     steps {
-        //         script {
-        //             sh 'terraform destroy -auto-approve'
-        //         }
-        //     }
-        // }
     }
 
     post {
