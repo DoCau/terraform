@@ -2,16 +2,20 @@ pipeline{
 
     agent { label 'c23100002' }
 
-    environment{
-        GITHUB_TERRAFORM_PIPELINE_CREDENTIAL = credentials('GITHUB_TERRAFORM_PIPELINE_CREDENTIAL')
+    parameters {
+        string(name: 'branchName', defaultValue: 'main', description: '')
     }
 
     stages{
         stage('Checkout Repo') {
             steps {
-                echo "$GITHUB_TERRAFORM_PIPELINE_CREDENTIAL"
-                git branch: "${branchName}",
-                credentialsId: GITHUB_TERRAFORM_PIPELINE_CREDENTIAL,
+
+                environment {
+                    github_credentials = credentials('GITHUB_TERRAFORM_PIPELINE_CREDENTIAL')
+                }
+
+                git branch: "${params.branchName}",
+                credentialsId: github_credentials,
                 url: "https://github.com/DoCau/devops2402-dothecau.git"
             }
         }
