@@ -14,9 +14,12 @@ pipeline {
     stages {
         stage('Traverse to project dir') {
             steps {
-                sh 'pwd'
-                sh 'cd ..'
-                sh 'pwd'
+                sh '''
+                    pwd
+                    cd ../
+                    pwd
+                    ls
+                '''
             }
         }
 
