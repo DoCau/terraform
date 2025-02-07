@@ -5,11 +5,14 @@ pipeline{
     parameters {
         string(name: 'branchName', defaultValue: 'main', description: '')
     }
+    environment {
+        github_creddential = credentials('GITHUB_TERRAFORM_PIPELINE_CREDENTIAL')
+    }
     stages{
         stage('Checkout Repo') {
             steps {
                 git branch: "${params.branchName}",
-                    credentialsId: credentials('GITHUB_TERRAFORM_PIPELINE_CREDENTIAL'),
+                    credentialsId: 'GITHUB_TERRAFORM_PIPELINE_CREDENTIAL',
                     url: "https://github.com/DoCau/devops2402-dothecau.git"
             }
         }
