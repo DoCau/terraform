@@ -259,7 +259,7 @@ resource "aws_instance" "jenkins-master-ec2" {
         - credentials:
             - usernamePassword:
                 scope: GLOBAL
-                id: "github_credential_for_jenkins_files"
+                id: "GITHUB_TERRAFORM_PIPELINE_CREDENTIAL"
                 username: "${var.github_username}"
                 password: "${var.github_password}"
                 description: "jenkins pipelines take github credentials here"
