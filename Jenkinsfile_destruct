@@ -10,7 +10,8 @@ pipeline {
     stages {
         stage('Traverse to project dir') {
             steps {
-                sh "cd ${userDirectory}/workspace/${pipelineName}"
+                fullDir = "cd ${userDirectory}/workspace/${pipelineName}"
+                sh fullDir
                 sh 'pwd'
                 sh 'ls'
             }
