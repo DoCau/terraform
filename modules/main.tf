@@ -253,9 +253,6 @@ resource "aws_instance" "jenkins-master-ec2" {
   echo ">>>STEP 8.1<<<"
   cat <<EOT > "$userdir/jenkins"
   jenkins:
-    securityRealm: legacy
-    authorizationStrategy: loggedInUsersCanDoAnyThing
-
   credentials:
     system:
       domainCredentials:
@@ -274,7 +271,7 @@ resource "aws_instance" "jenkins-master-ec2" {
                 description: "SSH private passphrase & key for SSH connection to worker"
                 privateKeySource:
                   directEntry:
-                    privateKey: "${var.ssh_private_key}"
+                    privateKey: "${local_file.ec2-private-key.content}"
   EOT
   mv "$userdir/jenkins" "$userdir/jenkins.yml"
   sudo chmod 777 "$userdir/jenkins.yml"
