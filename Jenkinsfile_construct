@@ -5,9 +5,9 @@ pipeline{
     parameters {
         string(name: 'branchName', defaultValue: 'main', description: '')
     }
-    environment {
-        github_creddential = credentials('GITHUB_TERRAFORM_PIPELINE_CREDENTIAL')
-    }
+    // environment {
+    //     github_creddential = credentials('GITHUB_TERRAFORM_PIPELINE_CREDENTIAL')
+    // }
     stages{
         stage('Checkout Repo') {
             steps {
