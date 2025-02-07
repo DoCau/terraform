@@ -2,23 +2,35 @@ pipeline {
     
     agent { label 'c23100002' }
 
+    parameters {
+        string(name: 'pipelineName', defaultValue: '', description: 'By specifying name of pipeline (pipeline that used to run Terraform apply), Jenkins can traverse to the Terraform project and run Terraform destroy')
+        string(name: 'userDirectory', defaultValue: '/home/ubuntu', description: '')
+    }
 
     stages {
-        stage('Terraform Plan - Destroy') {
+        stage('Traverse to project dir') {
             steps {
-                script {
-                    sh 'terraform plan -destroy -out=tfplan-destroy'
-                }
+                sh "cd ${userDirectory}/workspace/${pipelineName}"
+                sh 'pwd'
+                sh 'ls'
             }
         }
 
-        stage('Terraform Destroy') {
-            steps {
-                script {
-                    sh 'terraform destroy -auto-approve'
-                }
-            }
-        }
+        // stage('Terraform Plan - Destroy') {
+        //     steps {
+        //         script {
+        //             sh 'terraform plan -destroy -out=tfplan-destroy'
+        //         }
+        //     }
+        // }
+
+        // stage('Terraform Destroy') {
+        //     steps {
+        //         script {
+        //             sh 'terraform destroy -auto-approve'
+        //         }
+        //     }
+        // }
     }
 
     post {
