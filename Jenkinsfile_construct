@@ -13,7 +13,7 @@ pipeline{
             steps {
 
                 git branch: "${params.branchName}",
-                credentialsId: GITHUB_CREDENTIALS,
+                credentialsId: $GITHUB_CREDENTIALS,
                 url: "https://github.com/DoCau/devops2402-dothecau.git"
             }
         }
