@@ -7,11 +7,14 @@ pipeline {
         string(name: 'userDirectory', defaultValue: '/home/ubuntu', description: '')
     }
 
+    environment {
+        DESIRED_DIR = "${userDirectory}/workspace/${pipelineName}"
+    }
+
     stages {
         stage('Traverse to project dir') {
             steps {
-                fullDir = "cd ${userDirectory}/workspace/${pipelineName}"
-                sh fullDir
+                sh 'cd $DESIRED_DIR'
                 sh 'pwd'
                 sh 'ls'
             }
