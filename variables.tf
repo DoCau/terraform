@@ -46,10 +46,3 @@ variable "SSH_PASSPHRASE" {
   sensitive = true
   default   = ""
 }
-
-variable "SSH_PRIVATE_KEY" {
-  type      = string
-  nullable  = false
-  sensitive = true
-}
-

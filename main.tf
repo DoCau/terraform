@@ -9,5 +9,4 @@ module "full-infra" {
   github_password       = var.GITHUB_PASSWORD
   ssh_username          = var.SSH_USERNAME
   ssh_passphrase        = var.SSH_PASSPHRASE
-  ssh_private_key       = var.SSH_PRIVATE_KEY
 }
