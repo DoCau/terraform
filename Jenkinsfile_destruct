@@ -15,12 +15,8 @@ pipeline {
         stage('Traverse to project dir') {
             steps {
                 sh 'pwd'
-                dir('$DESIRED_DIR') {
-                    sh 'pwd'
-                    sh 'ls'
-                }
+                sh 'cd ..'
                 sh 'pwd'
-                sh 'ls'
             }
         }
 
