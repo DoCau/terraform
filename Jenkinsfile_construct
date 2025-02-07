@@ -9,8 +9,9 @@ pipeline{
     stages{
         stage('Checkout Repo') {
             steps {
-                git branch: '${branchName}',
-                url: 'https://${GITHUB_TERRAFORM_PIPELINE_CREDENTIAL}@github.com/DoCau/devops2402-dothecau.git'
+                git branch: "${branchName}",
+                credentialsId: GITHUB_TERRAFORM_PIPELINE_CREDENTIAL,
+                url: "https://github.com/DoCau/devops2402-dothecau.git"
             }
         }
 
