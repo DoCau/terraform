@@ -23,13 +23,18 @@ pipeline {
             }
         }
 
-        // stage('Terraform Plan - Destroy') {
-        //     steps {
-        //         script {
-        //             sh 'terraform plan -destroy -out=tfplan-destroy'
-        //         }
-        //     }
-        // }
+        stage('Terraform Plan - Destroy') {
+            steps {
+                script {
+                    sh '''
+                        cd "${DESIRED_DIR}"
+                        pwd
+                        ls
+                    '''
+                    //sh 'terraform plan -destroy -out=tfplan-destroy'
+                }
+            }
+        }
 
         // stage('Terraform Destroy') {
         //     steps {
